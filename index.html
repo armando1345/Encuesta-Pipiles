@@ -45,14 +45,11 @@
                     
                     <!-- Barra de Progreso -->
                     <div class="quiz-progress mb-6">
-                        <p class="quiz-step-counter">Paso <span id="current-step-num">1</span> de <span id="total-steps-num">12</span></p>
+                        <p class="quiz-step-counter" id="progress-label">Producto</p>
                         <div class="quiz-progress-track">
                             <span class="quiz-progress-fill" id="progress-bar"></span>
                         </div>
                     </div>
-
-                    <!-- Mensaje de Error Global -->
-                    <p class="field-error" id="quizStepError"></p>
 
                     <!-- PASO 1: Multimedia -->
                     <fieldset class="quiz-step is-active" id="step-multimedia">
@@ -65,24 +62,27 @@
                         </div>
 
                         <div id="tab-content-videos" class="tab-content active">
-                            <div class="videos-grid">
-                                <div class="video-placeholder">
-                                    <span class="text-sm font-bold">Video 1</span>
-                                    <span class="text-xs opacity-75">(Espacio reservado)</span>
-                                </div>
-                                <div class="video-placeholder">
-                                    <span class="text-sm font-bold">Video 2</span>
-                                    <span class="text-xs opacity-75">(Espacio reservado)</span>
-                                </div>
+                            <div class="video-frame">
+                                <iframe
+                                    src="https://www.youtube.com/embed/nzTZzAFh1pE"
+                                    title="Presentación Jamaica Pipiles"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowfullscreen>
+                                </iframe>
                             </div>
                         </div>
 
                         <div id="tab-content-images" class="tab-content">
                             <div class="concept-gallery">
-                                <div class="gallery-item"><img src="../assets/vaso jamaica.png" alt="Vaso Jamaica" class="gallery-image"></div>
-                                <div class="gallery-item"><img src="../assets/jamaica pipiles terminado.png" alt="Terminado" class="gallery-image"></div>
-                                <div class="gallery-item"><img src="../assets/jamaica con tapa.png" alt="Con tapa" class="gallery-image"></div>
-                                <div class="gallery-item"><img src="../assets/pipiles_imaginary.png" alt="Prototipo" class="gallery-image"></div>
+                                <button type="button" class="gallery-item gallery-item-featured" data-lightbox-src="../assets/afiche 1.png" data-lightbox-alt="Afiche de Jamaica Pipiles">
+                                    <img src="../assets/afiche 1.png" alt="Afiche de Jamaica Pipiles" class="gallery-image">
+                                </button>
+                                <button type="button" class="gallery-item" data-lightbox-src="../assets/jamaica pipiles terminado.png" data-lightbox-alt="Jamaica Pipiles terminado">
+                                    <img src="../assets/jamaica pipiles terminado.png" alt="Jamaica Pipiles terminado" class="gallery-image">
+                                </button>
+                                <button type="button" class="gallery-item" data-lightbox-src="../assets/jamaica con tapa.png" data-lightbox-alt="Jamaica Pipiles con tapa">
+                                    <img src="../assets/jamaica con tapa.png" alt="Jamaica Pipiles con tapa" class="gallery-image">
+                                </button>
                             </div>
                         </div>
 
@@ -121,7 +121,7 @@
                         </div>
                         <div class="quiz-actions mt-6">
                             <button type="button" class="quiz-btn quiz-btn-secondary" onclick="prevStep()">Atrás</button>
-                            <button type="button" class="quiz-btn quiz-btn-primary" onclick="nextStep()">Siguiente</button>
+                            <button type="button" class="quiz-btn quiz-btn-primary" onclick="nextStep()">Enviar encuesta</button>
                         </div>
                     </fieldset>
 
@@ -162,8 +162,6 @@
                             <label class="quiz-option"><input type="checkbox" name="p3_palabras" value="Común"><span>Común</span></label>
                             <label class="quiz-option"><input type="checkbox" name="p3_palabras" value="Confusa"><span>Confusa</span></label>
                             <label class="quiz-option"><input type="checkbox" name="p3_palabras" value="Antojable"><span>Antojable</span></label>
-                        </div>
-                        <div class="mt-3">
                             <label class="quiz-option"><input type="checkbox" name="p3_palabras" value="Otro" id="p3-otro-check"><span>Otro:</span></label>
                             <div class="quiz-conditional mt-2" id="p3-conditional" style="display:none;">
                                 <input type="text" id="p3_palabras_otro" placeholder="Especifica">
@@ -366,7 +364,7 @@
                         </div>
                         <div class="quiz-actions mt-6">
                             <button type="button" class="quiz-btn quiz-btn-secondary" onclick="prevStep()">Atrás</button>
-                            <button type="button" class="quiz-btn quiz-btn-primary" onclick="nextStep()">Siguiente</button>
+                            <button type="button" class="quiz-btn quiz-btn-primary" onclick="nextStep()">Enviar encuesta</button>
                         </div>
                     </fieldset>
 
@@ -379,7 +377,7 @@
                         </div>
                         <div class="quiz-actions mt-6">
                             <button type="button" class="quiz-btn quiz-btn-secondary" onclick="prevStep()">Atrás</button>
-                            <button type="button" class="quiz-btn quiz-btn-primary" onclick="submitSurvey()">Enviar Encuesta</button>
+                            <button type="button" class="quiz-btn quiz-btn-primary" onclick="submitSurvey()">Enviar encuesta</button>
                         </div>
                     </fieldset>
 
@@ -395,7 +393,6 @@
                     <!-- PASO 15: ÉXITO -->
                     <fieldset class="quiz-step" id="step-success">
                         <div class="thanks-content">
-                            <div class="success-icon">✨</div>
                             <h2 class="quiz-step-title text-center">¡Muchas gracias por tu tiempo!</h2>
                             <p class="quiz-help-text mt-4 text-center text-lg">Tus respuestas han sido registradas con éxito y nos serán de gran ayuda para mejorar Jamaica Pipiles.</p>
                         </div>
@@ -417,6 +414,11 @@
             </div>
         </section>
     </main>
+
+    <div class="image-lightbox" id="image-lightbox" aria-hidden="true">
+        <button type="button" class="lightbox-close" aria-label="Cerrar imagen ampliada">&times;</button>
+        <img src="" alt="" class="lightbox-image" id="lightbox-image">
+    </div>
 
     <!-- Script de lógica principal -->
     <script src="app.js"></script>

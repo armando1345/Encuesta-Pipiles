@@ -1,59 +1,50 @@
 /* ==========================================================================
-   LÓGICA DE CONTROL: ENCUESTA INTERACTIVA DE JAMAICA PIPILES
+   Logica de control: encuesta interactiva de Jamaica Pipiles
    ========================================================================== */
 
-// URL del Web App de Google Apps Script (el usuario debe reemplazar esta URL con la suya)
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_XXXXXXXX_REPLACE_ME_XXXXXXXX/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzzD1b1WoiC1pFZSklPBy1pxOTaWLi0Q5ntdMduvIUm0A6IdOgvWttck3ylRQZqlg/exec";
 
-// Lista ordenada de los IDs de todos los pasos del flujo
 const STEPS = [
-    "step-0",          // Bienvenida
-    "quiz-container",  // Contenedor principal de preguntas (no es un paso en sí, pero activa el form)
-    "step-multimedia", // Videos e Imágenes
-    "step-1",          // Pregunta 1
-    "step-1b",         // Pregunta 1b (Bifurcación si P1 = Nunca)
-    "step-2",          // Pregunta 2
-    "step-3",          // Pregunta 3
-    "step-4",          // Pregunta 4 (Matriz Likert)
-    "step-5",          // Pregunta 5
-    "step-6",          // Pregunta 6
-    "step-7",          // Pregunta 7
-    "step-8",          // Pregunta 8
-    "step-9",          // Pregunta 9
-    "step-10",         // Pregunta 10
-    "step-10b",        // Pregunta 10b (Bifurcación si P10 = Menos de $2)
-    "step-loading",    // Pantalla de carga
-    "step-success",    // Pantalla de éxito
-    "step-error"       // Pantalla de error
+    "step-0",
+    "quiz-container",
+    "step-multimedia",
+    "step-1",
+    "step-1b",
+    "step-2",
+    "step-3",
+    "step-4",
+    "step-5",
+    "step-6",
+    "step-7",
+    "step-8",
+    "step-9",
+    "step-10",
+    "step-10b",
+    "step-loading",
+    "step-success",
+    "step-error"
 ];
 
-let currentStepIndex = 0; // Inicia en Bienvenida (step-0)
-// Historial para navegación precisa con bifurcaciones
+let currentStepIndex = 0;
 let navigationHistory = [];
 
 document.addEventListener("DOMContentLoaded", () => {
     initStepUI();
     setupConditionalInputs();
     setupCheckboxLimits();
+    setupLikertScales();
+    setupImageLightbox();
 });
 
-/**
- * Inicializa la UI en el paso inicial
- */
 function initStepUI() {
     showStep(currentStepIndex);
 }
 
-/**
- * Muestra el paso correspondiente por su índice
- * @param {number} index Índice del paso a mostrar
- */
 function showStep(index) {
     const currentStepId = STEPS[index];
-
-    // Ocultar la pantalla de bienvenida si no estamos en ella
     const introEl = document.getElementById("step-0");
     const formContainer = document.getElementById("quiz-container");
+    document.body.dataset.quizStep = currentStepId;
 
     if (currentStepId === "step-0") {
         introEl.style.display = "grid";
@@ -61,154 +52,122 @@ function showStep(index) {
     } else {
         introEl.style.display = "none";
         formContainer.style.display = "block";
-        
-        // Ocultar todos los fieldsets del form
+
         const fieldsets = formContainer.querySelectorAll("fieldset");
         fieldsets.forEach(fs => {
             fs.classList.remove("is-active");
             fs.style.display = "none";
         });
 
-        // Mostrar el paso actual (fieldset)
         const currentStepEl = document.getElementById(currentStepId);
         if (currentStepEl) {
             currentStepEl.style.display = "grid";
-            // Pequeño retraso para que la animación CSS aplique correctamente
             setTimeout(() => {
                 currentStepEl.classList.add("is-active");
             }, 10);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({ top: 0, behavior: "smooth" });
         }
     }
 
     updateProgressBar(currentStepId);
 }
 
-/**
- * Actualiza la barra de progreso en base al paso actual de preguntas
- * @param {string} stepId ID del paso actual
- */
 function updateProgressBar(stepId) {
     const progressContainer = document.querySelector(".quiz-progress");
     const progressBar = document.getElementById("progress-bar");
-    const currentStepNumSpan = document.getElementById("current-step-num");
-    const totalStepsNumSpan = document.getElementById("total-steps-num");
+    const progressLabel = document.getElementById("progress-label");
 
-    // Mapeo del ID de paso a su número visual para la encuesta
-    const stepNumbers = {
-        "step-0": 0,
-        "step-multimedia": 1,
-        "step-1": 2,
-        "step-1b": 2, // Se mantiene como paso 2 ya que es una subpregunta
-        "step-2": 3,
-        "step-3": 4,
-        "step-4": 5,
-        "step-5": 6,
-        "step-6": 7,
-        "step-7": 8,
-        "step-8": 9,
-        "step-9": 10,
-        "step-10": 11,
-        "step-10b": 11 // Se mantiene como paso 11
+    const questionNumbers = {
+        "step-1": 1,
+        "step-1b": 1,
+        "step-2": 2,
+        "step-3": 3,
+        "step-4": 4,
+        "step-5": 5,
+        "step-6": 6,
+        "step-7": 7,
+        "step-8": 8,
+        "step-9": 9,
+        "step-10": 10,
+        "step-10b": 10
     };
 
-    const visualStep = stepNumbers[stepId] !== undefined ? stepNumbers[stepId] : 12;
-    const totalVisualSteps = 12; // Bienvenida (0) + Multimedia (1) + 10 Preguntas (2-11)
-
-    // Ocultar barra de progreso en pantallas finales o iniciales
     if (stepId === "step-0" || stepId === "step-loading" || stepId === "step-success" || stepId === "step-error") {
         if (progressContainer) progressContainer.style.display = "none";
-    } else {
-        if (progressContainer) progressContainer.style.display = "grid";
-    }
-
-    if (currentStepNumSpan && totalStepsNumSpan && progressBar) {
-        currentStepNumSpan.textContent = visualStep;
-        totalStepsNumSpan.textContent = totalVisualSteps;
-        const progressPercentage = (visualStep / totalVisualSteps) * 100;
-        progressBar.style.width = `${progressPercentage}%`;
-    }
-}
-
-/**
- * Navega al paso siguiente evaluando la lógica condicional y validando la entrada
- */
-function nextStep() {
-    const currentStepId = STEPS[currentStepIndex];
-
-    // 1. Validar si la pregunta del paso actual fue contestada
-    if (!validateStepInput(currentStepId)) {
-        showValidationWarning();
         return;
     }
 
-    // Ocultar mensaje de error si existía
-    const errorEl = document.getElementById("quizStepError");
-    if(errorEl) errorEl.style.display = "none";
+    if (progressContainer) progressContainer.style.display = "grid";
+    if (!progressBar || !progressLabel) return;
 
-    // Guardar el paso actual en el historial antes de saltar
+    if (stepId === "step-multimedia") {
+        progressLabel.textContent = "Producto";
+        progressBar.style.width = "8%";
+        return;
+    }
+
+    const questionNumber = questionNumbers[stepId] || 0;
+    progressLabel.textContent = `Pregunta ${questionNumber} de 10`;
+    progressBar.style.width = `${(questionNumber / 10) * 100}%`;
+}
+
+function nextStep() {
+    const currentStepId = STEPS[currentStepIndex];
+
+    if (!validateStepInput(currentStepId)) {
+        showValidationWarning(currentStepId);
+        return;
+    }
+
+    clearValidationWarning(currentStepId);
     navigationHistory.push(currentStepIndex);
 
-    // 2. Evaluar paso 0 a multimedia
     if (currentStepId === "step-0") {
         currentStepIndex = STEPS.indexOf("step-multimedia");
         showStep(currentStepIndex);
         return;
     }
 
-    // 3. Evaluar bifurcación en Pregunta 1 (step-1)
     if (currentStepId === "step-1") {
         const checkedP1 = document.querySelector('input[name="p1_frecuencia"]:checked');
-        if (checkedP1 && checkedP1.value.includes("Nunca")) {
-            currentStepIndex = STEPS.indexOf("step-1b"); // Ir a 1b
-        } else {
-            currentStepIndex = STEPS.indexOf("step-2");  // Saltar 1b, ir a P2
-        }
+        currentStepIndex = checkedP1 && checkedP1.value.includes("Nunca")
+            ? STEPS.indexOf("step-1b")
+            : STEPS.indexOf("step-2");
         showStep(currentStepIndex);
         return;
     }
 
-    // 4. Evaluar bifurcación en Pregunta 10 (step-10)
+    if (currentStepId === "step-1b") {
+        submitSurvey();
+        return;
+    }
+
     if (currentStepId === "step-10") {
         const checkedP10 = document.querySelector('input[name="p10_precio_estimado"]:checked');
         if (checkedP10 && checkedP10.value.includes("Menos de $2.00")) {
-            currentStepIndex = STEPS.indexOf("step-10b"); // Ir a 10b
+            currentStepIndex = STEPS.indexOf("step-10b");
+            showStep(currentStepIndex);
         } else {
             submitSurvey();
-            return;
         }
-        showStep(currentStepIndex);
         return;
     }
 
-    // 5. Flujo normal secuencial
     if (currentStepIndex < STEPS.length - 1) {
         currentStepIndex++;
-        // Saltar el índice "quiz-container" si cae allí (no debería pasar por el flow anterior, pero porsiacaso)
-        if(STEPS[currentStepIndex] === "quiz-container") currentStepIndex++;
-        
+        if (STEPS[currentStepIndex] === "quiz-container") currentStepIndex++;
         showStep(currentStepIndex);
     }
 }
 
-/**
- * Navega al paso anterior en base al historial recorrido
- */
 function prevStep() {
     if (navigationHistory.length > 0) {
         currentStepIndex = navigationHistory.pop();
         showStep(currentStepIndex);
-        
-        const errorEl = document.getElementById("quizStepError");
-        if(errorEl) errorEl.style.display = "none";
+        clearValidationWarning(STEPS[currentStepIndex]);
     }
 }
 
-/**
- * Valida si se ha ingresado/seleccionado una respuesta válida en el paso actual
- * @param {string} stepId ID del paso actual
- * @returns {boolean} True si es válido
- */
 function validateStepInput(stepId) {
     if (stepId === "step-0" || stepId === "step-multimedia" || stepId === "step-loading" || stepId === "step-success" || stepId === "step-error") {
         return true;
@@ -217,30 +176,25 @@ function validateStepInput(stepId) {
     const container = document.getElementById(stepId);
     if (!container) return true;
 
-    // Caso de preguntas de opción única (Radio buttons)
     const radios = container.querySelectorAll('input[type="radio"]');
     if (radios.length > 0) {
-        const isLikert = stepId === "step-4";
-        if (isLikert) {
+        if (stepId === "step-4") {
             const groups = ["p4_1_autentica", "p4_2_moderna", "p4_3_premium", "p4_4_empaque", "p4_5_calorias", "p4_6_confianza"];
-            return groups.every(groupName => {
-                return document.querySelector(`input[name="${groupName}"]:checked`) !== null;
-            });
-        } else {
-            const name = radios[0].name;
-            const checkedRadio = document.querySelector(`input[name="${name}"]:checked`);
-            if (checkedRadio) {
-                if (checkedRadio.id.includes("otro") || checkedRadio.value === "Otro") {
-                    const textInput = container.querySelector('input[type="text"]');
-                    return textInput && textInput.value.trim() !== "";
-                }
-                return true;
-            }
-            return false;
+            return groups.every(groupName => document.querySelector(`input[name="${groupName}"]:checked`) !== null);
         }
+
+        const name = radios[0].name;
+        const checkedRadio = document.querySelector(`input[name="${name}"]:checked`);
+        if (!checkedRadio) return false;
+
+        if (checkedRadio.id.includes("otro") || checkedRadio.value === "Otro") {
+            const textInput = container.querySelector('input[type="text"]');
+            return textInput && textInput.value.trim() !== "";
+        }
+
+        return true;
     }
 
-    // Caso de preguntas de selección múltiple (Checkboxes)
     const checkboxes = container.querySelectorAll('input[type="checkbox"]');
     if (checkboxes.length > 0) {
         const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
@@ -251,43 +205,80 @@ function validateStepInput(stepId) {
             const textInput = container.querySelector('input[type="text"]');
             return textInput && textInput.value.trim() !== "";
         }
+
         return true;
     }
 
-    // Caso de entrada de texto
     const textInput = container.querySelector('input[type="text"]');
-    if (textInput) {
-        return textInput.value.trim() !== "";
-    }
-
-    return true;
+    return textInput ? textInput.value.trim() !== "" : true;
 }
 
-/**
- * Muestra una advertencia visual si el usuario intenta continuar sin responder
- */
-function showValidationWarning() {
-    const errorEl = document.getElementById("quizStepError");
-    if(errorEl) {
-        errorEl.textContent = "Por favor, selecciona una opción para continuar.";
+function getStepErrorEl(stepId) {
+    const container = document.getElementById(stepId);
+    if (!container) return null;
+
+    let errorEl = container.querySelector(".field-error");
+    if (!errorEl) {
+        errorEl = document.createElement("p");
+        errorEl.className = "field-error";
+        errorEl.setAttribute("role", "alert");
+
+        const actions = container.querySelector(".quiz-actions");
+        container.insertBefore(errorEl, actions || null);
+    }
+
+    return errorEl;
+}
+
+function getValidationMessage(stepId) {
+    const container = document.getElementById(stepId);
+    if (!container) return "Completa este paso para continuar.";
+
+    if (stepId === "step-4") {
+        return "Responde todas las afirmaciones de la escala antes de continuar.";
+    }
+
+    const checkedOtro = container.querySelector('input[id*="otro"]:checked');
+    if (checkedOtro) {
+        return "Especifica tu respuesta en el campo de texto.";
+    }
+
+    if (container.querySelector('input[type="text"]') && !container.querySelector('input[type="radio"], input[type="checkbox"]')) {
+        return "Escribe tu estimado antes de enviar la encuesta.";
+    }
+
+    if (container.querySelector('input[type="checkbox"]')) {
+        return "Selecciona al menos una opcion para continuar.";
+    }
+
+    return "Selecciona una opcion para continuar.";
+}
+
+function showValidationWarning(stepId) {
+    const errorEl = getStepErrorEl(stepId);
+    if (errorEl) {
+        errorEl.textContent = getValidationMessage(stepId);
         errorEl.style.display = "block";
+        errorEl.scrollIntoView({ block: "nearest", behavior: "smooth" });
     }
 }
 
-/**
- * Configura la lógica para habilitar/deshabilitar los campos de texto inline ("Otro")
- */
+function clearValidationWarning(stepId) {
+    const container = document.getElementById(stepId);
+    const errorEl = container ? container.querySelector(".field-error") : null;
+    if (errorEl) errorEl.style.display = "none";
+}
+
 function setupConditionalInputs() {
     const configConditional = (radioOrCheckId, conditionalDivId, inputId) => {
         const trigger = document.getElementById(radioOrCheckId);
         const conditionalDiv = document.getElementById(conditionalDivId);
         const input = document.getElementById(inputId);
-        
-        if(trigger && conditionalDiv && input) {
-            // Event delegation on the parent container or directly
-            const parentForm = trigger.closest('fieldset');
+
+        if (trigger && conditionalDiv && input) {
+            const parentForm = trigger.closest("fieldset");
             const allInputs = parentForm.querySelectorAll(`input[name="${trigger.name}"]`);
-            
+
             allInputs.forEach(i => {
                 i.addEventListener("change", () => {
                     if (trigger.checked) {
@@ -308,59 +299,70 @@ function setupConditionalInputs() {
     configConditional("p7-otro-radio", "p7-conditional", "p7_duda_freno_otro");
 }
 
-/**
- * Configura la limitación de marcar un máximo de 3 checkboxes en las preguntas indicadas
- */
 function setupCheckboxLimits() {
     const configureLimit = (containerId, limitNumber) => {
         const container = document.getElementById(containerId);
         if (!container) return;
 
-        const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+        const checkboxes = Array.from(container.querySelectorAll('input[type="checkbox"]'));
+        const note = document.createElement("p");
+        note.className = "quiz-limit-note";
+        container.insertAdjacentElement("beforebegin", note);
+
+        const setOptionDisabled = (checkbox, disabled) => {
+            checkbox.disabled = disabled;
+            const option = checkbox.closest(".quiz-option");
+            if (option) option.classList.toggle("is-disabled", disabled);
+        };
+
+        const updateNote = () => {
+            const checkedCount = checkboxes.filter(c => c.checked).length;
+            const noOptionsCheck = container.querySelector('input[id*="ninguno"], input[id*="no-compraria"]');
+            const isExclusive = noOptionsCheck && noOptionsCheck.checked;
+            note.textContent = isExclusive
+                ? "Opcion exclusiva seleccionada."
+                : `${Math.min(checkedCount, limitNumber)}/${limitNumber} seleccionadas`;
+            note.classList.toggle("is-full", !isExclusive && checkedCount >= limitNumber);
+        };
+
         checkboxes.forEach(cb => {
             cb.addEventListener("change", () => {
-                // Caso excluyente ("Ninguna")
                 const noOptionsCheck = container.querySelector('input[id*="ninguno"], input[id*="no-compraria"]');
+
                 if (noOptionsCheck && cb === noOptionsCheck && cb.checked) {
                     checkboxes.forEach(otherCb => {
                         if (otherCb !== cb) {
                             otherCb.checked = false;
-                            otherCb.setAttribute("disabled", "true");
-                            otherCb.closest('.quiz-option').style.opacity = '0.5';
+                            setOptionDisabled(otherCb, true);
                         }
                     });
-                    // Trigger change para que se oculten los "Otros" si estaban activos
-                    const event = new Event('change');
-                    container.dispatchEvent(event);
+                    updateNote();
+                    container.dispatchEvent(new Event("change"));
                     return;
                 }
 
                 if (noOptionsCheck && cb === noOptionsCheck && !cb.checked) {
-                    checkboxes.forEach(otherCb => {
-                        otherCb.removeAttribute("disabled");
-                        otherCb.closest('.quiz-option').style.opacity = '1';
-                    });
+                    checkboxes.forEach(otherCb => setOptionDisabled(otherCb, false));
+                    updateNote();
                     return;
                 }
 
-                const checkedCount = Array.from(checkboxes).filter(c => c.checked).length;
+                const checkedCount = checkboxes.filter(c => c.checked).length;
                 if (checkedCount >= limitNumber) {
                     checkboxes.forEach(otherCb => {
-                        if (!otherCb.checked) {
-                            otherCb.setAttribute("disabled", "true");
-                            otherCb.closest('.quiz-option').style.opacity = '0.5';
-                        }
+                        if (!otherCb.checked) setOptionDisabled(otherCb, true);
                     });
                 } else {
                     checkboxes.forEach(otherCb => {
-                        if (noOptionsCheck && !noOptionsCheck.checked && otherCb !== noOptionsCheck) {
-                            otherCb.removeAttribute("disabled");
-                            otherCb.closest('.quiz-option').style.opacity = '1';
-                        }
+                        if (!noOptionsCheck || !noOptionsCheck.checked) setOptionDisabled(otherCb, false);
                     });
                 }
+
+                updateNote();
             });
         });
+
+        updateNote();
     };
 
     configureLimit("p2-checkboxes", 3);
@@ -368,9 +370,17 @@ function setupCheckboxLimits() {
     configureLimit("p6-checkboxes", 3);
 }
 
-/**
- * Controla el cambio de pestañas de Multimedia (Videos / Imágenes)
- */
+function setupLikertScales() {
+    document.querySelectorAll(".quiz-scale-options").forEach(scale => {
+        if (scale.nextElementSibling && scale.nextElementSibling.classList.contains("quiz-scale-labels")) return;
+
+        const labels = document.createElement("div");
+        labels.className = "quiz-scale-labels";
+        labels.innerHTML = "<span>1 = desacuerdo</span><span>5 = acuerdo</span>";
+        scale.insertAdjacentElement("afterend", labels);
+    });
+}
+
 function switchTab(tabName) {
     const tabButtons = document.querySelectorAll(".tab-btn");
     const tabContents = document.querySelectorAll(".tab-content");
@@ -387,9 +397,50 @@ function switchTab(tabName) {
     }
 }
 
-/**
- * Recopila los datos del formulario de la encuesta
- */
+function setupImageLightbox() {
+    const lightbox = document.getElementById("image-lightbox");
+    const lightboxImage = document.getElementById("lightbox-image");
+    const closeButton = lightbox ? lightbox.querySelector(".lightbox-close") : null;
+    const galleryItems = document.querySelectorAll("[data-lightbox-src]");
+
+    if (!lightbox || !lightboxImage || !closeButton || galleryItems.length === 0) return;
+
+    const openLightbox = (src, alt) => {
+        lightboxImage.src = src;
+        lightboxImage.alt = alt;
+        lightbox.classList.add("is-open");
+        lightbox.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        closeButton.focus();
+    };
+
+    const closeLightbox = () => {
+        lightbox.classList.remove("is-open");
+        lightbox.setAttribute("aria-hidden", "true");
+        lightboxImage.src = "";
+        lightboxImage.alt = "";
+        document.body.style.overflow = "";
+    };
+
+    galleryItems.forEach(item => {
+        item.addEventListener("click", () => {
+            openLightbox(item.dataset.lightboxSrc, item.dataset.lightboxAlt || "");
+        });
+    });
+
+    closeButton.addEventListener("click", closeLightbox);
+
+    lightbox.addEventListener("click", event => {
+        if (event.target === lightbox) closeLightbox();
+    });
+
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && lightbox.classList.contains("is-open")) {
+            closeLightbox();
+        }
+    });
+}
+
 function gatherSurveyData() {
     const data = {};
 
@@ -398,11 +449,9 @@ function gatherSurveyData() {
 
     const p1b = document.querySelector('input[name="p1b_razon_no_consumo"]:checked');
     if (p1b) {
-        if (p1b.value === "Otro") {
-            data.p1b_razon_no_consumo = `Otro: ${document.getElementById("p1b_razon_no_consumo_otro").value}`;
-        } else {
-            data.p1b_razon_no_consumo = p1b.value;
-        }
+        data.p1b_razon_no_consumo = p1b.value === "Otro"
+            ? `Otro: ${document.getElementById("p1b_razon_no_consumo_otro").value}`
+            : p1b.value;
     } else {
         data.p1b_razon_no_consumo = "N/A";
     }
@@ -445,11 +494,9 @@ function gatherSurveyData() {
 
     const p7 = document.querySelector('input[name="p7_duda_freno"]:checked');
     if (p7) {
-        if (p7.value === "Otro") {
-            data.p7_duda_freno = `Otro: ${document.getElementById("p7_duda_freno_otro").value}`;
-        } else {
-            data.p7_duda_freno = p7.value;
-        }
+        data.p7_duda_freno = p7.value === "Otro"
+            ? `Otro: ${document.getElementById("p7_duda_freno_otro").value}`
+            : p7.value;
     } else {
         data.p7_duda_freno = "";
     }
@@ -471,9 +518,6 @@ function gatherSurveyData() {
     return data;
 }
 
-/**
- * Envía la encuesta al endpoint de Google Apps Script
- */
 function submitSurvey() {
     currentStepIndex = STEPS.indexOf("step-loading");
     showStep(currentStepIndex);
