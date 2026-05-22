@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estudio de Mercado - Jamaica Pipiles</title>
+    
+    <!-- Carga de la tipografía oficial Lato desde Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (Estructura base) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    
+    <!-- Favicon Oficial Pipiles -->
+    <link rel="icon" type="image/svg+xml" href="../assets/logo_pipiles_transparente.svg">
+    
+    <!-- Estilos Custom Pipiles (Sobrescribe/Extiende Tailwind) -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="font-sans antialiased quiz-page">
+    
+    <!-- Barra de Navegación -->
+    <nav class="site-nav w-full py-4 px-4 md:px-8">
+        <a href="#" aria-label="Volver al inicio">
+            <img src="../assets/logo_pipiles_transparente.svg" alt="Logo Jamaica Pipiles" class="brand-logo">
+        </a>
+    </nav>
+
+    <!-- Contenedor Principal del Formulario -->
+    <main class="quiz-layout px-4 md:px-8">
+        <section class="quiz-section">
+            
+            <!-- PASO 0: Bienvenida (Intro) -->
+            <div class="quiz-intro" id="step-0">
+                <p class="quiz-eyebrow">Estudio de Mercado</p>
+                <h1 class="quiz-title">Fresco de Jamaica Pipiles</h1>
+                <p class="quiz-intro-copy">Nos interesa conocer tu opinión sobre nuestro nuevo prototipo. La encuesta es breve y no hay respuestas incorrectas. ¡Gracias por tu tiempo!</p>
+                <div class="mt-4">
+                    <button type="button" class="quiz-btn w-full sm:w-auto" onclick="nextStep()">Comenzar Encuesta</button>
+                </div>
+            </div>
+
+            <!-- Formulario Central -->
+            <div class="quiz-card" id="quiz-container" style="display: none;">
+                <form id="survey-form" class="quiz-form" onsubmit="event.preventDefault();">
+                    
+                    <!-- Barra de Progreso -->
+                    <div class="quiz-progress mb-6">
+                        <p class="quiz-step-counter" id="progress-label">Producto</p>
+                        <div class="quiz-progress-track">
+                            <span class="quiz-progress-fill" id="progress-bar"></span>
+                        </div>
+                    </div>
+
+                    <!-- PASO 1: Multimedia -->
+                    <fieldset class="quiz-step is-active" id="step-multimedia">
+                        <legend class="quiz-step-title">Conoce Jamaica Pipiles</legend>
+                        <p class="quiz-help-text mb-4">Antes de responder, echa un vistazo a la presentación de nuestro prototipo.</p>
+                        
+                        <div class="multimedia-tabs">
+                            <button type="button" class="tab-btn active" onclick="switchTab('videos')">Videos</button>
+                            <button type="button" class="tab-btn" onclick="switchTab('images')">Imágenes</button>
+                        </div>
+
+                        <div id="tab-content-videos" class="tab-content active">
+                            <div class="video-frame">
+                                <iframe
+                                    src="https://www.youtube.com/embed/nzTZzAFh1pE"
+                                    title="Presentación Jamaica Pipiles"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowfullscreen>
+                                </iframe>
+                            </div>
+                        </div>
+
+                        <div id="tab-content-images" class="tab-content">
+                            <div class="concept-gallery">
+                                <button type="button" class="gallery-item gallery-item-featured" data-lightbox-src="../assets/afiche 1.jpg" data-lightbox-alt="Afiche de Jamaica Pipiles">
+                                    <img src="../assets/afiche 1.jpg" alt="Afiche de Jamaica Pipiles" class="gallery-image">
+                                </button>
+                                <button type="button" class="gallery-item" data-lightbox-src="../assets/jamaica pipiles terminado.jpg" data-lightbox-alt="Jamaica Pipiles terminado">
+                                    <img src="../assets/jamaica pipiles terminado.jpg" alt="Jamaica Pipiles terminado" class="gallery-image">
+                                </button>
+                                <button type="button" class="gallery-item" data-lightbox-src="../assets/jamaica con tapa.jpg" data-lightbox-alt="Jamaica Pipiles con tapa">
+                                    <img src="../assets/jamaica con tapa.jpg" alt="Jamaica Pipiles con tapa" class="gallery-image">
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="quiz-actions mt-6">
+                            <button type="button" class="quiz-btn quiz-btn-primary" onclick="nextStep()">Continuar</button>
+                        </div>
+                    </fieldset>
+
+                    <!-- PASO 2: P1 -->
+                    <fieldset class="quiz-step" id="step-1">
+                        <legend class="quiz-step-title">1. ¿Con qué frecuencia consumes "fresco" de jamaica?</legend>
+                        <div class="quiz-options mt-4">
+                            <label class="quiz-option"><input type="radio" name="p1_frecuencia" value="6 a 7 veces por semana"><span>6 a 7 veces por semana</span></label>
+                            <label class="quiz-option"><input type="radio" name="p1_frecuencia" value="3 a 5 veces por semana"><span>3 a 5 veces por semana</span></label>
+                            <label class="quiz-option"><input type="radio" name="p1_frecuencia" value="1 a 2 veces por semana"><span>1 a 2 veces por semana</span></label>
+                            <label class="quiz-option"><input type="radio" name="p1_frecuencia" value="1 a 4 veces al mes"><span>1 a 4 veces al mes</span></label>
+                            <label class="quiz-option"><input type="radio" name="p1_frecuencia" value="Casi nunca"><span>Casi nunca</span></label>
+                            <label class="quiz-option" id="option-p1-nunca"><input type="radio" name="p1_frecuencia" value="Nunca (ir a pregunta 1b)"><span>Nunca</span></label>
+                        </div>
+                        <div class="quiz-actions mt-6">
+                            <button type="button" class="quiz-btn quiz-btn-secondary" onclick="prevStep()">Atrás</button>
+                            <button type="button" class="quiz-btn quiz-btn-primary" onclick="nextStep()">Siguiente</button>
+                        </div>
+                    </fieldset>
+
+                    <!-- PASO 3: P1b -->
+                    <fieldset class="quiz-step" id="step-1b">
+                        <legend class="quiz-step-title">1b. ¿Por qué no consumes "fresco" de jamaica?</legend>
+                        <div class="quiz-options mt-4">
+                            <label class="quiz-option"><input type="radio" name="p1b_razon_no_consumo" value="Me hace daño"><span>Me hace daño</span></label>
+                            <label class="quiz-option"><input type="radio" name="p1b_razon_no_consumo" value="No me gusta"><span>No me gusta</span></label>
+                            <label class="quiz-option"><input type="radio" name="p1b_razon_no_consumo" value="Otro" id="p1b-otro-radio"><span>Otro:</span></label>
+                            <div class="quiz-conditional mt-2" id="p1b-conditional" style="display:none;">
+                                <input type="text" id="p1b_razon_no_consumo_otro" placeholder="Especifica tu razón">
+                            </div>
+                        </div>
+                        <div class="quiz-actions mt-6">
+                            <button type="button" class="quiz-btn quiz-btn-secondary" onclick="prevStep()">Atrás</button>
+                            <button type="button" class="quiz-btn quiz-btn-primary" onclick="nextStep()">Enviar encuesta</button>
+                        </div>
+                    </fieldset>
+
+                    <!-- PASO 4: P2 -->
+                    <fieldset class="quiz-step" id="step-2">
+                        <legend class="quiz-step-title">2. Después de ver el prototipo, ¿en qué momento te imaginarías tomando Jamaica Pipiles?</legend>
+                        <p class="quiz-help-text">Selecciona hasta 3 opciones.</p>
+                        <div class="quiz-options mt-4" id="p2-checkboxes">
+                            <label class="quiz-option"><input type="checkbox" name="p2_momento" value="Durante el almuerzo"><span>Durante el almuerzo</span></label>
+                            <label class="quiz-option"><input type="checkbox" name="p2_momento" value="Durante la cena"><span>Durante la cena</span></label>
+                            <label class="quiz-option"><input type="checkbox" name="p2_momento" value="Pupusería/típico"><span>En una pupusería o restaurante típico</span></label>
+                            <label class="quiz-option"><input type="checkbox" name="p2_momento" value="Salida familiar"><span>En una salida familiar</span></label>
+                            <label class="quiz-option"><input type="checkbox" name="p2_momento" value="Bebida para llevar"><span>Como bebida para llevar</span></label>
+                            <label class="quiz-option"><input type="checkbox" name="p2_momento" value="En casa"><span>En casa</span></label>
+                            <label class="quiz-option"><input type="checkbox" name="p2_momento" value="Ningún momento" id="p2-ninguno-check"><span>No me imagino tomándola en ningún momento</span></label>
+                        </div>
+                        <div class="quiz-actions mt-6">
+                            <button type="button" class="quiz-btn quiz-btn-secondary" onclick="prevStep()">Atrás</button>
+                            <button type="button" class="quiz-btn quiz-btn-primary" onclick="nextStep()">Siguiente</button>
+                        </div>
+                    </fieldset>
+
+                    <!-- PASO 5: P3 -->
+                    <fieldset class="quiz-step" id="step-3">
+                        <legend class="quiz-step-title">3. ¿Qué palabras describen mejor a Jamaica Pipiles?</legend>
+                        <p class="quiz-help-text">Selecciona hasta 3 opciones.</p>
+                        <div class="quiz-options grid-2 mt-4" id="p3-checkboxes">
+                            <label class="quiz-option"><input type="checkbox" name="p3_palabras" value="Auténtica"><span>Auténtica</span></label>
+                            <label class="quiz-option"><input type="checkbox" name="p3_palabras" value="Tradicional"><span>Tradicional</span></label>
+                            <label class="quiz-option"><input type="checkbox" name="p3_palabras" value="Moderna"><span>Moderna</span></label>
+                            <label class="quiz-option"><input type="checkbox" name="p3_palabras" value="Premium"><span>Premium</span></label>
+                            <label class="quiz-option"><input type="checkbox" name="p3_palabras" value="Refrescante"><span>Refrescante</span></label>
+                            <label class="quiz-option"><input type="checkbox" name="p3_palabras" value="Saludable"><span>Saludable</span></label>
+                            <label class="quiz-option"><input type="checkbox" name="p3_palabras" value="Natural"><span>Natural</span></label>
+                            <label class="quiz-option"><input type="checkbox" name="p3_palabras" value="Artificial"><span>Artificial</span></label>
+                            <label class="quiz-option"><input type="checkbox" name="p3_palabras" value="Cara"><span>Cara</span></label>
+                            <label class="quiz-option"><input type="checkbox" name="p3_palabras" value="Bonita"><span>Bonita</span></label>
+                            <label class="quiz-option"><input type="checkbox" name="p3_palabras" value="Común"><span>Común</span></label>
+                            <label class="quiz-option"><input type="checkbox" name="p3_palabras" value="Confusa"><span>Confusa</span></label>
+                            <label class="quiz-option"><input type="checkbox" name="p3_palabras" value="Antojable"><span>Antojable</span></label>
+                            <label class="quiz-option"><input type="checkbox" name="p3_palabras" value="Otro" id="p3-otro-check"><span>Otro:</span></label>
+                            <div class="quiz-conditional mt-2" id="p3-conditional" style="display:none;">
+                                <input type="text" id="p3_palabras_otro" placeholder="Especifica">
+                            </div>
+                        </div>
+                        <div class="quiz-actions mt-6">
+                            <button type="button" class="quiz-btn quiz-btn-secondary" onclick="prevStep()">Atrás</button>
+                            <button type="button" class="quiz-btn quiz-btn-primary" onclick="nextStep()">Siguiente</button>
+                        </div>
+                    </fieldset>
+
+                    <!-- PASO 6: P4 (Likert) -->
+                    <fieldset class="quiz-step" id="step-4">
+                        <legend class="quiz-step-title">4. Del 1 al 5, ¿qué tan de acuerdo estás con estas afirmaciones?</legend>
+                        <p class="quiz-help-text mb-4">1 = Totalmente en desacuerdo | 5 = Totalmente de acuerdo.</p>
+                        
+                        <div class="likert-container">
+                            <!-- Fila 1 -->
+                            <div class="likert-row">
+                                <div class="likert-statement">Jamaica Pipiles se ve auténtica.</div>
+                                <div class="quiz-scale-options">
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_1_autentica" value="1"><span>1</span></label>
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_1_autentica" value="2"><span>2</span></label>
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_1_autentica" value="3"><span>3</span></label>
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_1_autentica" value="4"><span>4</span></label>
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_1_autentica" value="5"><span>5</span></label>
+                                </div>
+                            </div>
+                            <!-- Fila 2 -->
+                            <div class="likert-row">
+                                <div class="likert-statement">Se ve como una versión moderna de una bebida tradicional.</div>
+                                <div class="quiz-scale-options">
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_2_moderna" value="1"><span>1</span></label>
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_2_moderna" value="2"><span>2</span></label>
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_2_moderna" value="3"><span>3</span></label>
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_2_moderna" value="4"><span>4</span></label>
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_2_moderna" value="5"><span>5</span></label>
+                                </div>
+                            </div>
+                            <!-- Fila 3 -->
+                            <div class="likert-row">
+                                <div class="likert-statement">El producto se ve premium.</div>
+                                <div class="quiz-scale-options">
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_3_premium" value="1"><span>1</span></label>
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_3_premium" value="2"><span>2</span></label>
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_3_premium" value="3"><span>3</span></label>
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_3_premium" value="4"><span>4</span></label>
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_3_premium" value="5"><span>5</span></label>
+                                </div>
+                            </div>
+                            <!-- Fila 4 -->
+                            <div class="likert-row">
+                                <div class="likert-statement">El empaque me parece atractivo.</div>
+                                <div class="quiz-scale-options">
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_4_empaque" value="1"><span>1</span></label>
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_4_empaque" value="2"><span>2</span></label>
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_4_empaque" value="3"><span>3</span></label>
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_4_empaque" value="4"><span>4</span></label>
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_4_empaque" value="5"><span>5</span></label>
+                                </div>
+                            </div>
+                            <!-- Fila 5 -->
+                            <div class="likert-row">
+                                <div class="likert-statement">Se entiende que es baja en calorías.</div>
+                                <div class="quiz-scale-options">
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_5_calorias" value="1"><span>1</span></label>
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_5_calorias" value="2"><span>2</span></label>
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_5_calorias" value="3"><span>3</span></label>
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_5_calorias" value="4"><span>4</span></label>
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_5_calorias" value="5"><span>5</span></label>
+                                </div>
+                            </div>
+                            <!-- Fila 6 -->
+                            <div class="likert-row">
+                                <div class="likert-statement">El producto me genera confianza.</div>
+                                <div class="quiz-scale-options">
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_6_confianza" value="1"><span>1</span></label>
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_6_confianza" value="2"><span>2</span></label>
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_6_confianza" value="3"><span>3</span></label>
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_6_confianza" value="4"><span>4</span></label>
+                                    <label class="quiz-scale-option"><input type="radio" name="p4_6_confianza" value="5"><span>5</span></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="quiz-actions mt-6">
+                            <button type="button" class="quiz-btn quiz-btn-secondary" onclick="prevStep()">Atrás</button>
+                            <button type="button" class="quiz-btn quiz-btn-primary" onclick="nextStep()">Siguiente</button>
+                        </div>
+                    </fieldset>
+
+                    <!-- PASO 7: P5 -->
+                    <fieldset class="quiz-step" id="step-5">
+                        <legend class="quiz-step-title">5. Al ver Jamaica Pipiles, ¿cómo imaginas que sería su sabor comparado con una jamaica tradicional?</legend>
+                        <div class="quiz-options mt-4">
+                            <label class="quiz-option"><input type="radio" name="p5_comparacion_sabor" value="Mucho mejor"><span>Mucho mejor</span></label>
+                            <label class="quiz-option"><input type="radio" name="p5_comparacion_sabor" value="Algo mejor"><span>Algo mejor</span></label>
+                            <label class="quiz-option"><input type="radio" name="p5_comparacion_sabor" value="Igual"><span>Igual</span></label>
+                            <label class="quiz-option"><input type="radio" name="p5_comparacion_sabor" value="Algo peor"><span>Algo peor</span></label>
+                            <label class="quiz-option"><input type="radio" name="p5_comparacion_sabor" value="Mucho peor"><span>Mucho peor</span></label>
+                        </div>
+                        <div class="quiz-actions mt-6">
+                            <button type="button" class="quiz-btn quiz-btn-secondary" onclick="prevStep()">Atrás</button>
+                            <button type="button" class="quiz-btn quiz-btn-primary" onclick="nextStep()">Siguiente</button>
+                        </div>
+                    </fieldset>
+
+                    <!-- PASO 8: P6 -->
+                    <fieldset class="quiz-step" id="step-6">
+                        <legend class="quiz-step-title">6. ¿Cuál sería la razón por la que comprarías Jamaica Pipiles?</legend>
+                        <p class="quiz-help-text">Selecciona hasta 3 opciones.</p>
+                        <div class="quiz-options mt-4" id="p6-checkboxes">
+                            <label class="quiz-option"><input type="checkbox" name="p6_razon_compra" value="Gusta la jamaica"><span>Porque me gusta la jamaica</span></label>
+                            <label class="quiz-option"><input type="checkbox" name="p6_razon_compra" value="Baja calorías"><span>Porque es baja en calorías</span></label>
+                            <label class="quiz-option"><input type="checkbox" name="p6_razon_compra" value="Empaque atractivo"><span>Porque el empaque se ve atractivo</span></label>
+                            <label class="quiz-option"><input type="checkbox" name="p6_razon_compra" value="Gusta la marca"><span>Porque me gusta la marca</span></label>
+                            <label class="quiz-option"><input type="checkbox" name="p6_razon_compra" value="Higiénica confiable"><span>Porque se ve más higiénica o confiable</span></label>
+                            <label class="quiz-option"><input type="checkbox" name="p6_razon_compra" value="Diferente"><span>Porque se ve diferente a otras bebidas</span></label>
+                            <label class="quiz-option" id="option-p6-no-compraria"><input type="checkbox" name="p6_razon_compra" value="No compraría" id="p6-no-compraria-check"><span>No compraría esa marca</span></label>
+                            <div class="mt-2">
+                                <label class="quiz-option"><input type="checkbox" name="p6_razon_compra" value="Otro" id="p6-otro-check"><span>Otro:</span></label>
+                                <div class="quiz-conditional mt-2" id="p6-conditional" style="display:none;">
+                                    <input type="text" id="p6_razon_compra_otro" placeholder="Especifica tu razón">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="quiz-actions mt-6">
+                            <button type="button" class="quiz-btn quiz-btn-secondary" onclick="prevStep()">Atrás</button>
+                            <button type="button" class="quiz-btn quiz-btn-primary" onclick="nextStep()">Siguiente</button>
+                        </div>
+                    </fieldset>
+
+                    <!-- PASO 9: P7 -->
+                    <fieldset class="quiz-step" id="step-7">
+                        <legend class="quiz-step-title">7. ¿Cuál sería tu principal duda o freno para comprar Jamaica Pipiles?</legend>
+                        <div class="quiz-options mt-4">
+                            <label class="quiz-option"><input type="radio" name="p7_duda_freno" value="Sabor tradicional"><span>Que no sepa como jamaica tradicional</span></label>
+                            <label class="quiz-option"><input type="radio" name="p7_duda_freno" value="Sabor artificial"><span>Que tenga sabor artificial</span></label>
+                            <label class="quiz-option"><input type="radio" name="p7_duda_freno" value="Demasiado cara"><span>Que sea demasiado cara</span></label>
+                            <label class="quiz-option"><input type="radio" name="p7_duda_freno" value="No creer calorías"><span>Que no crea que realmente es baja en calorías</span></label>
+                            <label class="quiz-option"><input type="radio" name="p7_duda_freno" value="Ninguna duda"><span>No tendría ninguna duda importante</span></label>
+                            <div class="mt-2">
+                                <label class="quiz-option"><input type="radio" name="p7_duda_freno" value="Otro" id="p7-otro-radio"><span>Otro:</span></label>
+                                <div class="quiz-conditional mt-2" id="p7-conditional" style="display:none;">
+                                    <input type="text" id="p7_duda_freno_otro" placeholder="Especifica tu duda">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="quiz-actions mt-6">
+                            <button type="button" class="quiz-btn quiz-btn-secondary" onclick="prevStep()">Atrás</button>
+                            <button type="button" class="quiz-btn quiz-btn-primary" onclick="nextStep()">Siguiente</button>
+                        </div>
+                    </fieldset>
+
+                    <!-- PASO 10: P8 -->
+                    <fieldset class="quiz-step" id="step-8">
+                        <legend class="quiz-step-title">8. Si encontraras Jamaica Pipiles fría en un lugar donde compras comida o bebidas, ¿qué tan probable sería que la compraras?</legend>
+                        <div class="quiz-options mt-4">
+                            <label class="quiz-option"><input type="radio" name="p8_probabilidad_compra" value="Definitivamente la compraría"><span>Definitivamente la compraría</span></label>
+                            <label class="quiz-option"><input type="radio" name="p8_probabilidad_compra" value="Probablemente la compraría"><span>Probablemente la compraría</span></label>
+                            <label class="quiz-option"><input type="radio" name="p8_probabilidad_compra" value="Tal vez la compraría"><span>Tal vez la compraría</span></label>
+                            <label class="quiz-option"><input type="radio" name="p8_probabilidad_compra" value="Probablemente no la compraría"><span>Probablemente no la compraría</span></label>
+                            <label class="quiz-option"><input type="radio" name="p8_probabilidad_compra" value="Definitivamente no la compraría"><span>Definitivamente no la compraría</span></label>
+                        </div>
+                        <div class="quiz-actions mt-6">
+                            <button type="button" class="quiz-btn quiz-btn-secondary" onclick="prevStep()">Atrás</button>
+                            <button type="button" class="quiz-btn quiz-btn-primary" onclick="nextStep()">Siguiente</button>
+                        </div>
+                    </fieldset>
+
+                    <!-- PASO 11: P9 -->
+                    <fieldset class="quiz-step" id="step-9">
+                        <legend class="quiz-step-title">9. Si Jamaica Pipiles estuviera disponible con frecuencia, ¿cuántos vasos crees que comprarías al mes?</legend>
+                        <div class="quiz-options mt-4">
+                            <label class="quiz-option"><input type="radio" name="p9_vasos_mes" value="0 vasos"><span>0 vasos</span></label>
+                            <label class="quiz-option"><input type="radio" name="p9_vasos_mes" value="1 vaso"><span>1 vaso</span></label>
+                            <label class="quiz-option"><input type="radio" name="p9_vasos_mes" value="2 vasos"><span>2 vasos</span></label>
+                            <label class="quiz-option"><input type="radio" name="p9_vasos_mes" value="3 a 4 vasos"><span>3 a 4 vasos</span></label>
+                            <label class="quiz-option"><input type="radio" name="p9_vasos_mes" value="5 a 8 vasos"><span>5 a 8 vasos</span></label>
+                            <label class="quiz-option"><input type="radio" name="p9_vasos_mes" value="Más de 8 vasos"><span>Más de 8 vasos</span></label>
+                        </div>
+                        <div class="quiz-actions mt-6">
+                            <button type="button" class="quiz-btn quiz-btn-secondary" onclick="prevStep()">Atrás</button>
+                            <button type="button" class="quiz-btn quiz-btn-primary" onclick="nextStep()">Siguiente</button>
+                        </div>
+                    </fieldset>
+
+                    <!-- PASO 12: P10 -->
+                    <fieldset class="quiz-step" id="step-10">
+                        <legend class="quiz-step-title">10. Al ver el diseño, empaque y presentación, ¿cuál te imaginas que es el precio de un vaso de Jamaica Pipiles?</legend>
+                        <div class="quiz-options mt-4">
+                            <label class="quiz-option" id="option-p10-menos2"><input type="radio" name="p10_precio_estimado" value="Menos de $2.00"><span>Menos de $2.00</span></label>
+                            <label class="quiz-option"><input type="radio" name="p10_precio_estimado" value="$2.25"><span>$2.25</span></label>
+                            <label class="quiz-option"><input type="radio" name="p10_precio_estimado" value="$2.50"><span>$2.50</span></label>
+                            <label class="quiz-option"><input type="radio" name="p10_precio_estimado" value="$2.75"><span>$2.75</span></label>
+                            <label class="quiz-option"><input type="radio" name="p10_precio_estimado" value="$3.00"><span>$3.00</span></label>
+                            <label class="quiz-option"><input type="radio" name="p10_precio_estimado" value="$3.25"><span>$3.25</span></label>
+                            <label class="quiz-option"><input type="radio" name="p10_precio_estimado" value="$3.50"><span>$3.50</span></label>
+                            <label class="quiz-option"><input type="radio" name="p10_precio_estimado" value="Más de $3.50"><span>Más de $3.50</span></label>
+                        </div>
+                        <div class="quiz-actions mt-6">
+                            <button type="button" class="quiz-btn quiz-btn-secondary" onclick="prevStep()">Atrás</button>
+                            <button type="button" class="quiz-btn quiz-btn-primary" onclick="nextStep()">Enviar encuesta</button>
+                        </div>
+                    </fieldset>
+
+                    <!-- PASO 13: P10b -->
+                    <fieldset class="quiz-step" id="step-10b">
+                        <legend class="quiz-step-title">10b. ¿Qué precio exacto te imaginas que tiene la Jamaica Pipiles?</legend>
+                        <div class="booking-field mt-4">
+                            <label for="p10b_precio_exacto">Escribe tu estimado (en dólares):</label>
+                            <input type="text" name="p10b_precio_exacto" id="p10b_precio_exacto" placeholder="Ejemplo: 1.50">
+                        </div>
+                        <div class="quiz-actions mt-6">
+                            <button type="button" class="quiz-btn quiz-btn-secondary" onclick="prevStep()">Atrás</button>
+                            <button type="button" class="quiz-btn quiz-btn-primary" onclick="submitSurvey()">Enviar encuesta</button>
+                        </div>
+                    </fieldset>
+
+                    <!-- PASO 14: CARGA -->
+                    <fieldset class="quiz-step" id="step-loading">
+                        <div class="thanks-content">
+                            <div class="text-4xl text-center mb-4">⏳</div>
+                            <h2 class="quiz-step-title text-center">Enviando respuestas...</h2>
+                            <p class="quiz-help-text mt-2 text-center">Por favor, no cierres esta ventana.</p>
+                        </div>
+                    </fieldset>
+
+                    <!-- PASO 15: ÉXITO -->
+                    <fieldset class="quiz-step" id="step-success">
+                        <div class="thanks-content">
+                            <h2 class="quiz-step-title text-center">¡Muchas gracias por tu tiempo!</h2>
+                            <p class="quiz-help-text mt-4 text-center text-lg">Tus respuestas han sido registradas con éxito y nos serán de gran ayuda para mejorar Jamaica Pipiles.</p>
+                        </div>
+                    </fieldset>
+
+                    <!-- PASO 16: ERROR -->
+                    <fieldset class="quiz-step" id="step-error">
+                        <div class="thanks-content">
+                            <div class="text-4xl text-center mb-4">⚠️</div>
+                            <h2 class="quiz-step-title text-center">Hubo un problema</h2>
+                            <p class="quiz-help-text mt-2 text-center">No pudimos enviar tus respuestas. Por favor, revisa tu conexión a internet e inténtalo de nuevo.</p>
+                            <div class="quiz-actions mt-6 justify-center">
+                                <button type="button" class="quiz-btn quiz-btn-secondary w-full sm:w-auto" onclick="submitSurvey()">Reintentar</button>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <div class="image-lightbox" id="image-lightbox" aria-hidden="true">
+        <button type="button" class="lightbox-close" aria-label="Cerrar imagen ampliada">&times;</button>
+        <img src="" alt="" class="lightbox-image" id="lightbox-image">
+    </div>
+
+    <!-- Script de lógica principal -->
+    <script src="app.js"></script>
+</body>
+</html>
